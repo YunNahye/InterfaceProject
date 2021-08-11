@@ -33,3 +33,23 @@ class Precleaning():
   def addWeight(self, p, w):
     self.property.append(p)
     self.weight.append(w)
+
+  def logTransformation(self):
+    z = []   
+    for x in range(len(self.property)):
+        z.append(self.data_stdz[self.property[x]]*self.weight[x])
+        
+    self.division = [0 for i in range(len(self.data))]
+    for x in range(len(z)):
+        self.division += z[x]
+    self.division = pd.DataFrame(self.division.values, columns = ['division']) 
+    self.division_log = np.log(self.division)
+
+    self.division_log_1 = self.division_log
+    self.division_log_inf_index = self.division_log_1[self.division_log_1['division'] == -np.inf].index
+    division_log_del_inf = self.division_log_1.drop(self.division_log_inf_index)
+
+    self.division_log['division'] = self.division_log['division'].replace([-np.inf], min(division_log_del_inf['division'])-1)
+    self.division_log.isnull().values.any()
+
+    self.division_log_sort = self.division_log.sort_values(['division'], axis = 0, ascending = True)

@@ -19,6 +19,7 @@ class MyWindow(QMainWindow, form_class):
     self.setWindowTitle("전처리도구")
     self.importButton.clicked.connect(self.fileopen)
     self.addButton.clicked.connect(self.addProperty)
+    self.runPrecleaningButton.clicked.connect(self.logTrans)
 
   def fileopen(self):
     global filename
@@ -46,8 +47,11 @@ class MyWindow(QMainWindow, form_class):
     self.tableWidget.insertRow(rowPosition)
     self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(p))
     self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(w))
-    self.precleaning.addWeight(p, w)
+    self.precleaning.addWeight(p, float(w))
 
+  def logTrans(self):
+    self.precleaning.logTransformation()
+    
 if __name__ == "__main__":
   app = QApplication(sys.argv)
   myWindow = MyWindow()
