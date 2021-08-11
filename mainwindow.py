@@ -8,6 +8,7 @@ import time
 from PandasModel import PandasModel
 
 form_class = uic.loadUiType("uisample.ui")[0]
+_translate = QtCore.QCoreApplication.translate
 
 class MyWindow(QMainWindow, form_class):
   def __init__(self):
@@ -16,7 +17,7 @@ class MyWindow(QMainWindow, form_class):
     self.initUI()
 
   def initUI(self):
-    self.setWindowTitle("파일 오픈")
+    self.setWindowTitle("전처리도구")
     self.pushButton.clicked.connect(self.fileopen)
 
   def fileopen(self):
@@ -26,34 +27,16 @@ class MyWindow(QMainWindow, form_class):
 
   def dataload(self):
     start1 = time.time()
+    global data
     data = pd.read_excel(filename[0], index_col = None, header = 0)
     print("time :", time.time() - start1)
     start2 = time.time()
     model = PandasModel(data)
     self.tableView.setModel(model)
     print("time :", time.time() - start2)
-    abc = data.dtypes
-    ab = 0
-    lsd = []
-    name = []
-    for x in abc:
-        if x == "int64" or x == "float64":
-            name += [data.columns[ab]]      
-            lsd += [data.iloc[:,ab].values]
-        ab += 1
-        
-    data_num = pd.DataFrame(lsd[0], columns = [name[0]])
-    for x in range(len(lsd)-1):
-        x = x + 1
-        data_num.loc[:, name[x]] = lsd[x]
-                  
-    data_num = data_num.fillna(0)
-    feature_names = list(data_num.columns[0:300])
-
-    from sklearn.preprocessing import MinMaxScaler
-
-    data_0 = MinMaxScaler().fit_transform(data_num.iloc[:,0:300])
-    data_stdz = pd.DataFrame(data_0, columns = feature_names)
+    for i in range(len(data.columns)):
+      self.comboBox.addItem("")
+      self.comboBox.setItemText(i, _translate("Dialog", data.columns[i]))
 
 if __name__ == "__main__":
   app = QApplication(sys.argv)
