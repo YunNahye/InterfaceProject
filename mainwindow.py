@@ -18,7 +18,8 @@ class MyWindow(QMainWindow, form_class):
 
   def initUI(self):
     self.setWindowTitle("전처리도구")
-    self.pushButton.clicked.connect(self.fileopen)
+    self.importButton.clicked.connect(self.fileopen)
+    self.addButton.clicked.connect(self.addProperty)
 
   def fileopen(self):
     global filename
@@ -37,6 +38,12 @@ class MyWindow(QMainWindow, form_class):
     for i in range(len(data.columns)):
       self.comboBox.addItem("")
       self.comboBox.setItemText(i, _translate("Dialog", data.columns[i]))
+
+  def addProperty(self):
+    rowPosition = self.tableWidget.rowCount()
+    self.tableWidget.insertRow(rowPosition)
+    self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(self.comboBox.currentText()))
+    self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(self.weightInput.text()))
 
 if __name__ == "__main__":
   app = QApplication(sys.argv)
