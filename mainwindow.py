@@ -2,10 +2,9 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtWidgets, QtCore
 import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
 import time
 from PandasModel import PandasModel
+from Precleaning import Precleaning
 
 form_class = uic.loadUiType("uisample.ui")[0]
 _translate = QtCore.QCoreApplication.translate
@@ -30,6 +29,7 @@ class MyWindow(QMainWindow, form_class):
     start1 = time.time()
     global data
     data = pd.read_excel(filename[0], index_col = None, header = 0)
+    self.precleaning = Precleaning(data)
     print("time :", time.time() - start1)
     start2 = time.time()
     model = PandasModel(data)
@@ -41,9 +41,12 @@ class MyWindow(QMainWindow, form_class):
 
   def addProperty(self):
     rowPosition = self.tableWidget.rowCount()
+    p = self.comboBox.currentText()
+    w = self.weightInput.text()
     self.tableWidget.insertRow(rowPosition)
-    self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(self.comboBox.currentText()))
-    self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(self.weightInput.text()))
+    self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(p))
+    self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(w))
+    self.precleaning.addWeight(p, w)
 
 if __name__ == "__main__":
   app = QApplication(sys.argv)

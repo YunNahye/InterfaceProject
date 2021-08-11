@@ -5,6 +5,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 class Precleaning():
   def __init__(self, data = pd.DataFrame()):
+    self.data = data
     self.abc = data.dtypes
     self.ab = 0
     self.lsd = []
