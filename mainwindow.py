@@ -2,6 +2,8 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtWidgets, QtCore
 import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import time
 from PandasModel import PandasModel
 from Precleaning import Precleaning
@@ -20,6 +22,7 @@ class MyWindow(QMainWindow, form_class):
     self.importButton.clicked.connect(self.fileopen)
     self.addButton.clicked.connect(self.addProperty)
     self.runPrecleaningButton.clicked.connect(self.logTrans)
+    self.drawButton.clicked.connect(self.draw)
 
   def fileopen(self):
     global filename
@@ -51,7 +54,14 @@ class MyWindow(QMainWindow, form_class):
 
   def logTrans(self):
     self.precleaning.logTransformation()
-    
+
+  def draw(self):
+    n = int(self.classInput.text())
+    if self.rangeRadio.isChecked():
+      self.precleaning.drawGraphByRange(n, self.graphLayout)
+    elif self.countRadio.isChecked():
+      self.precleaning.drawGraphByCount(n)
+
 if __name__ == "__main__":
   app = QApplication(sys.argv)
   myWindow = MyWindow()

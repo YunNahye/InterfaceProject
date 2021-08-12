@@ -1,7 +1,9 @@
+from PyQt5.QtWidgets import QVBoxLayout
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 class Precleaning():
   def __init__(self, data = pd.DataFrame()):
@@ -53,3 +55,72 @@ class Precleaning():
     self.division_log.isnull().values.any()
 
     self.division_log_sort = self.division_log.sort_values(['division'], axis = 0, ascending = True)
+    print(self.division_log_sort)
+
+  def drawGraphByRange(self, f, layout = QVBoxLayout):
+    h = []
+    for x in range(f):
+        h.append(x*(max(self.division_log['division']) - min(self.division_log['division']))/f)
+
+    self.fig = plt.Figure()
+    plt.hist(self.division_log ,bins = np.arange(min(self.division_log['division'])-2, max(self.division_log['division'])+2, 0.5), rwidth = 0.8)
+    for x in range(f):
+        plt.axvline(min(self.division_log['division'])+h[x], color = 'r', ls = '--')
+    plt.axvline(max(self.division_log['division']), color = 'r', ls = '--')
+    self.canvas = FigureCanvas(self.fig)
+    layout.addWidget(self.canvas)
+    self.canvas.draw()
+    # plt.show()
+    
+    for x in range(f):
+        h[x] = h[x] + min(self.division_log['division'])    
+    h.append(max(self.division_log['division']))
+    
+    y = max(self.division_log['division'])
+    i = []
+    for x1 in self.division_log['division']:
+        if y == x1:
+            i.append(f)
+        for x2 in range(f):
+            if h[x2] <= x1 < h[x2 + 1]:
+                i.append(x2 + 1)
+    
+    i = pd.DataFrame(i, columns = ['division number'])
+    self.data_1 = self.data.join(self.division_log['division'])
+    self.data_1 = self.data_1.join(i['division number'])
+    self.data_sort = self.data_1.sort_values(['division'], axis = 0, ascending = True)
+    self.i1 = i['division number'].value_counts()
+
+    return self.canvas
+
+  def drawGraphByCount(self, f):
+    l = []
+    for x in range(f):
+        l.append(self.division_log_sort.iloc[x*(round(len(self.data)/f))])
+    
+    j = []   
+    for x in range(f):
+        j.append(l[x][0])
+    
+    plt.hist(self.division_log ,bins = np.arange(min(self.division_log['division'])-2, max(self.division_log['division'])+2, 0.5), rwidth = 0.8)
+    for x in range(f):
+        plt.axvline(j[x], color = 'r', ls = '--')
+    plt.axvline(max(self.division_log['division']), color = 'r', ls = '--')
+    plt.show()
+    
+    j.append(max(self.division_log['division']))
+    
+    y = max(self.division_log['division'])
+    k = []
+    for x1 in self.division_log['division']:
+        if y == x1:
+            k.append(f)
+        for x2 in range(f):
+            if j[x2] <= x1 < j[x2 + 1]:
+                k.append(x2 + 1)
+  
+    k = pd.DataFrame(k, columns = ['division number'])
+    self.data_1 = self.data.join(self.division_log['division'])
+    self.data_1 = self.data_1.join(k['division number'])
+    self.data_sort = self.data_1.sort_values(['division'], axis = 0, ascending = True)
+    self.k1 = k['division number'].value_counts()
