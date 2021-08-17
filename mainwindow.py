@@ -21,6 +21,7 @@ class MyWindow(QMainWindow, form_class):
     self.setWindowTitle("전처리도구")
     self.importButton.clicked.connect(self.fileopen)
     self.addButton.clicked.connect(self.addProperty)
+    self.clearListButton.clicked.connect(self.clearList)
     self.runPrecleaningButton.clicked.connect(self.logTrans)
     self.drawButton.clicked.connect(self.draw)
 
@@ -43,6 +44,9 @@ class MyWindow(QMainWindow, form_class):
       self.comboBox.addItem("")
       self.comboBox.setItemText(i, _translate("Dialog", data.columns[i]))
 
+  def clearList(self):
+    self.tableWidget.setRowCount(0);
+
   def addProperty(self):
     rowPosition = self.tableWidget.rowCount()
     p = self.comboBox.currentText()
@@ -58,9 +62,11 @@ class MyWindow(QMainWindow, form_class):
   def draw(self):
     n = int(self.classInput.text())
     if self.rangeRadio.isChecked():
-      self.precleaning.drawGraphByRange(n, self.graphLayout)
+      self.newData = self.precleaning.drawGraphByRange(n, self.graphLayout)
     elif self.countRadio.isChecked():
-      self.precleaning.drawGraphByCount(n)
+      self.newData = self.precleaning.drawGraphByCount(n)
+    model = PandasModel(self.newData)
+    self.tableView.setModel(model)
 
 if __name__ == "__main__":
   app = QApplication(sys.argv)

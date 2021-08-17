@@ -36,6 +36,10 @@ class Precleaning():
     self.property.append(p)
     self.weight.append(w)
 
+  def clearWeight(self):
+    self.property = []
+    self.weight = []
+
   def logTransformation(self):
     z = []   
     for x in range(len(self.property)):
@@ -91,7 +95,7 @@ class Precleaning():
     self.data_sort = self.data_1.sort_values(['division'], axis = 0, ascending = True)
     self.i1 = i['division number'].value_counts()
 
-    return self.canvas
+    return self.data_1
 
   def drawGraphByCount(self, f):
     l = []
@@ -124,3 +128,5 @@ class Precleaning():
     self.data_1 = self.data_1.join(k['division number'])
     self.data_sort = self.data_1.sort_values(['division'], axis = 0, ascending = True)
     self.k1 = k['division number'].value_counts()
+
+    return self.data_1
